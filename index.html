@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nihongo Quest — 日本語クエスト</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #d32f2f;
+      --primary-dark: #b71c1c;
+      --primary-light: #ffebee;
+      --accent-sakura: #fbcfe8;
+      --accent-sakura-dark: #f472b6;
+      --accent-gold: #f59e0b;
+      --bg-main: #fcf8f6;
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --correct-color: #10b981;
+      --correct-bg: #ecfdf5;
+      --wrong-color: #ef4444;
+      --wrong-bg: #fef2f2;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 8px 24px rgba(211, 47, 47, 0.08);
+      --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.1);
+      --font-family: 'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(254, 242, 242, 0.8) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(251, 207, 232, 0.4) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.75rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+      border: 2px solid #fff;
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .nav-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-badge {
+      background: var(--primary-light);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(211, 47, 47, 0.15);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-nav {
+      background: transparent;
+      border: none;
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-nav:hover, .btn-nav.active {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .view-panel {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+      border: 1px solid rgba(211, 47, 47, 0.12);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: '日';
+      position: absolute;
+      right: -10px;
+      bottom: -30px;
+      font-size: 14rem;
+      font-weight: 900;
+      color: rgba(211, 47, 47, 0.03);
+      font-family: 'Noto Sans JP';
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 600px;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(211, 47, 47, 0.1);
+      color: var(--primary-dark);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .mascot-box {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--accent-sakura-dark);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mascot-avatar {
+      font-size: 2.2rem;
+      background: var(--accent-sakura);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mascot-message {
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .mascot-jp {
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .progress-bar-container {
+      background: #e2e8f0;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 0.75rem 0;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, var(--primary), var(--accent-sakura-dark));
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+      border-radius: 5px;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 14px rgba(211, 47, 47, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #e53935, #c62828);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .quiz-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .quiz-info-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .quiz-counter {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--primary-dark);
+    }
+
+    .timer-badge {
+      background: #fffbe3;
+      color: #b45309;
+      border: 1px solid #fef3c7;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      position: relative;
+    }
+
+    .question-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .question-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.4;
+      font-family: 'Noto Sans JP', var(--font-family);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .option-btn {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      width: 100%;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .option-key {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .option-btn.correct {
+      border-color: var(--correct-color);
+      background: var(--correct-bg);
+      color: #065f46;
+    }
+
+    .option-btn.correct .option-key {
+      background: var(--correct-color);
+      color: white;
+    }
+
+    .option-btn.wrong {
+      border-color: var(--wrong-color);
+      background: var(--wrong-bg);
+      color: #991b1b;
+    }
+
+    .option-btn.wrong .option-key {
+      background: var(--wrong-color);
+      color: white;
+    }
+
+    .feedback-card {
+      display: none;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      border-left: 5px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      animation: fadeIn 0.25s ease;
+    }
+
+    .feedback-card.correct {
+      display: block;
+      border-left-color: var(--correct-color);
+      background: var(--correct-bg);
+    }
+
+    .feedback-card.wrong {
+      display: block;
+      border-left-color: var(--wrong-color);
+      background: var(--wrong-bg);
+    }
+
+    .feedback-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .feedback-card.correct .feedback-title { color: #065f46; }
+    .feedback-card.wrong .feedback-title { color: #991b1b; }
+
+    .feedback-explanation {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .result-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      max-width: 650px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .score-circle {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 8px 20px rgba(211, 47, 47, 0.3);
+      border: 4px solid #fff;
+    }
+
+    .score-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    .result-badge {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .summary-box {
+      background: #f8fafc;
+      padding: 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .summary-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .summary-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .hiragana-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .kana-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .kana-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+      background: var(--primary-light);
+    }
+
+    .kana-char {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text-main);
+    }
+
+    .kana-romaji {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-body {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .streak-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: white;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 2000;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 0.6rem 1rem; }
+      .nav-links { display: none; } /* Mobile bottom nav or simple toggle */
+      .brand-text h1 { font-size: 1rem; }
+      .hero-title { font-size: 1.5rem; }
+      .options-grid { grid-template-columns: 1fr; }
+      .result-summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-container">
+      <div class="brand" onclick="app.navigate('home')">
+        <div class="brand-logo">日</div>
+        <div class="brand-text">
+          <h1>Nihongo Quest</h1>
+          <span>日本語クエスト • JLPT N5</span>
+        </div>
+      </div>
+
+      <div class="nav-stats">
+        <div class="stat-badge" title="Level Pengguna">
+          ⭐ Lv.<span id="nav-level">1</span>
+        </div>
+        <div class="stat-badge" style="background:#fffbe3; color:#b45309;" title="Total XP">
+          ⚡ <span id="nav-xp">0</span> XP
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="btn-nav active" id="nav-btn-home" onclick="app.navigate('home')">🏠 Beranda</button>
+        <button class="btn-nav" id="nav-btn-hiragana" onclick="app.navigate('hiragana')">あ Hiragana</button>
+        <button class="btn-nav" id="nav-btn-review" onclick="app.navigate('review')">📝 Review</button>
+        <button class="btn-nav" id="nav-btn-stats" onclick="app.navigate('stats')">📊 Statistik</button>
+        <button class="btn-nav" id="nav-btn-settings" onclick="app.navigate('settings')">⚙️ Pengaturan</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="view-home" class="view-panel active">
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-tag">JLPT N5 MASTER &bull; 200 SOAL</span>
+          <h2 class="hero-title">Belajar Bahasa Jepang, Satu Soal Setiap Langkah!</h2>
+          <p class="hero-subtitle">Kuasai 200 kosakata, kata kerja, &amp; tata bahasa N5 melalui 8 sesi kuis interaktif yang seru!</p>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn-action btn-primary" onclick="app.startQuizSession()" style="width:auto; padding:0.85rem 1.75rem;">
+              🚀 Mulai Belajar Now
+            </button>
+            <button class="btn-action btn-secondary" onclick="app.navigate('stats')" style="width:auto;">
+              📊 Lihat Statistik
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mascot Box -->
+      <div class="mascot-box">
+        <div class="mascot-avatar">🐱</div>
+        <div class="mascot-message">
+          <span class="mascot-jp" id="mascot-jp-quote">一歩ずつ、がんばりましょう！</span>
+          <span id="mascot-id-quote">Mari berjuang selangkah demi selangkah!</span>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Progress Card -->
+        <div class="card">
+          <div class="card-title">📚 Progres Bank Soal (200 Soal)</div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted);">
+            <span>Status Siklus #<span id="dash-cycle">1</span></span>
+            <span><strong id="dash-used-count">0</strong> / 200 Soal Dijawab</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="dash-bank-progress"></div>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem;" id="dash-bank-status">
+            200 Soal Tersedia (8 Sesi Sempurna per Siklus)
+          </p>
+        </div>
+
+        <!-- Quick Stats Card -->
+        <div class="card">
+          <div class="card-title">🎯 Performa Belajar</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <div style="background:#f8fafc; padding:0.6rem; border-radius:8px;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Akurasi</div>
+              <div style="font-size:1.2rem; font-weight:800; color:var(--correct-color);" id="dash-accuracy">0%</div>
+            </div>
+            <div style="background:#f8fafc; padding:0.6rem; border-radius:8px;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Max Streak</div>
+              <div style="font-size:1.2rem; font-weight:800; color:var(--accent-gold);" id="dash-max-streak">0 🔥</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+        <button class="btn-action btn-secondary" onclick="app.navigate('hiragana')">
+          あ Pelajari Hiragana
+        </button>
+        <button class="btn-action btn-secondary" onclick="app.navigate('review')">
+          📝 Review Jawaban Salah (<span id="dash-wrong-badge">0</span>)
+        </button>
+      </div>
+    </section>
+
+    <section id="view-quiz" class="view-panel">
+      <div class="quiz-header">
+        <div class="quiz-info-group">
+          <span class="quiz-counter" id="quiz-session-title">Sesi 1 dari 8</span>
+          <span style="color:var(--border-color);">|</span>
+          <span class="quiz-counter" id="quiz-question-num">Soal 1 dari 25</span>
+        </div>
+        <div class="quiz-info-group">
+          <div class="timer-badge" id="quiz-timer-container" style="display:none;">
+            ⏱️ <span id="quiz-timer-text">30s</span>
+          </div>
+          <button class="btn-nav" onclick="app.toggleMute()" id="btn-quiz-mute">🔊 Audio</button>
+          <button class="btn-nav" onclick="app.confirmExitQuiz()" style="color:var(--wrong-color);">✖ Keluar</button>
+        </div>
+      </div>
+
+      <!-- Quiz Progress Bar -->
+      <div class="progress-bar-container" style="margin-bottom:1.25rem;">
+        <div class="progress-bar-fill" id="quiz-progress-bar"></div>
+      </div>
+
+      <!-- Question Box -->
+      <div class="question-card">
+        <div class="question-number" id="quiz-q-id">SOAL #1</div>
+        <div class="question-text" id="quiz-q-text">Loading Pertanyaan...</div>
+      </div>
+
+      <!-- 4 Options Grid -->
+      <div class="options-grid" id="quiz-options-container">
+        <!-- Dynamically filled with option buttons -->
+      </div>
+
+      <!-- Instant Feedback Box -->
+      <div class="feedback-card" id="quiz-feedback">
+        <div class="feedback-title" id="feedback-title">正解！ — Jawaban Benar!</div>
+        <div class="feedback-explanation" id="feedback-text">Penjelasan pembahasan jawaban...</div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn-action btn-primary" id="btn-next-q" onclick="app.nextQuestion()" style="display:none; width:auto; padding:0.85rem 2rem;">
+          Soal Berikutnya ➔
+        </button>
+      </div>
+    </section>
+
+    <section id="view-results" class="view-panel">
+      <div class="result-card">
+        <div class="score-circle">
+          <span class="score-number" id="res-score">100</span>
+          <span class="score-label">SKOR SESI</span>
+        </div>
+
+        <div class="result-badge" id="res-category">すごいです！ Luar Biasa!</div>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;" id="res-subtitle">
+          Sesi kuis berhasil diselesaikan dengan hasil sangat memuaskan!
+        </p>
+
+        <div class="result-summary-grid">
+          <div class="summary-box">
+            <div class="summary-val" style="color:var(--correct-color);" id="res-correct">25</div>
+            <div class="summary-lbl">Jawaban Benar</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-val" style="color:var(--wrong-color);" id="res-wrong">0</div>
+            <div class="summary-lbl">Jawaban Salah</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-val" style="color:var(--accent-gold);" id="res-xp-gained">+100</div>
+            <div class="summary-lbl">XP Didapat</div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1.5rem;">
+          <button class="btn-action btn-primary" onclick="app.startQuizSession()">
+            🔄 Mulai Sesi Berikutnya
+          </button>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <button class="btn-action btn-secondary" onclick="app.navigate('review')">
+              📝 Review Salah
+            </button>
+            <button class="btn-action btn-secondary" onclick="app.navigate('home')">
+              🏠 Beranda
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-hiragana" class="view-panel">
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-title">あ Tabel Belajar Hiragana Dasar</div>
+        <p style="color:var(--text-muted); font-size:0.9rem;">
+          Klik kartu karakter untuk mendengarkan pengucapan audio (Web Speech API) &amp; contoh kata sederhana.
+        </p>
+      </div>
+
+      <div id="hiragana-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <section id="view-stats" class="view-panel">
+      <div class="card" style="margin-bottom:1.25rem;">
+        <div class="card-title">📊 Statistik Kumulatif Belajar</div>
+        <div class="result-summary-grid" style="grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));">
+          <div class="summary-box">
+            <div class="summary-val" id="stat-sessions">0</div>
+            <div class="summary-lbl">Sesi Selesai</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-val" id="stat-total-q">0</div>
+            <div class="summary-lbl">Soal Dijawab</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-val" id="stat-accuracy">0%</div>
+            <div class="summary-lbl">Akurasi Rata-rata</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-val" id="stat-high-score">0</div>
+            <div class="summary-lbl">Skor Tertinggi</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏆 Badge Pencapaian</div>
+        <div id="badges-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.85rem;">
+          <!-- Dynamically filled with badges -->
+        </div>
+      </div>
+    </section>
+
+    <section id="view-review" class="view-panel">
+      <div class="card" style="margin-bottom:1.25rem;">
+        <div class="card-title">📝 Review Jawaban Salah</div>
+        <p style="color:var(--text-muted); font-size:0.9rem;">
+          Tinjau kembali soal-soal yang pernah Anda jawab salah untuk memperkuat pemahaman.
+        </p>
+      </div>
+
+      <div id="review-list-container">
+        <!-- Dynamically rendered wrong questions -->
+      </div>
+    </section>
+
+    <section id="view-settings" class="view-panel">
+      <div class="card">
+        <div class="card-title">⚙️ Pengaturan Aplikasi</div>
+        
+        <div style="display:flex; flex-direction:column; gap:1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong>Mode Kuis</strong>
+              <div style="font-size:0.8rem; color:var(--text-muted);">Pilih antara Santai (tanpa timer) atau Tantangan.</div>
+            </div>
+            <select id="setting-mode" onchange="app.updateSettings()" style="padding:0.5rem; border-radius:8px;">
+              <option value="exercise">Mode Latihan (Santai)</option>
+              <option value="challenge">Mode Tantangan (Timer)</option>
+            </select>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong>Efek Suara Synth</strong>
+              <div style="font-size:0.8rem; color:var(--text-muted);">Suara beep/chime audio saat menjawab.</div>
+            </div>
+            <input type="checkbox" id="setting-sound" onchange="app.updateSettings()" checked style="width:20px; height:20px;">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:1.25rem;">
+            <div>
+              <strong style="color:var(--wrong-color);">Reset Seluruh Progres</strong>
+              <div style="font-size:0.8rem; color:var(--text-muted);">Menghapus XP, Level, &amp; statistik tersimpan dari browser.</div>
+            </div>
+            <button class="btn-action" onclick="app.resetAllProgress()" style="width:auto; background:var(--wrong-bg); color:var(--wrong-color); border:1px solid var(--wrong-color);">
+              Reset Progress
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="modal-exit-quiz">
+    <div class="modal-body">
+      <h3 style="margin-bottom:0.5rem;">Kembali ke Beranda?</h3>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem;">
+        Progres sesi kuis aktif Anda akan disimpan dan dapat dilanjutkan kapan saja.
+      </p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn-action btn-secondary" onclick="app.closeModal('modal-exit-quiz')">Batal</button>
+        <button class="btn-action btn-primary" onclick="app.confirmExitQuizAction()">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="streak-toast" id="streak-toast">
+    ⚡ STREAK <span id="streak-count-text">5</span> BENAR BERTURUT-TURUT!
+  </div>
+
+  <script>
+    const questionBank = [
+      // --- PART 1 (Questions 1 - 100) ---
+      { id: 1, question: "Apa arti dari あさ?", options: { A: "Malam", B: "Pagi", C: "Siang", D: "Sore" }, answer: "B", explanation: "あさ (asa) berarti pagi." },
+      { id: 2, question: "Apa arti dari よる?", options: { A: "Malam", B: "Pagi", C: "Sore", D: "Siang" }, answer: "A", explanation: "よる (yoru) berarti malam." },
+      { id: 3, question: "Apa arti dari みず?", options: { A: "Susu", B: "Teh", C: "Air", D: "Kopi" }, answer: "C", explanation: "みず (mizu) berarti air minum." },
+      { id: 4, question: "Apa arti dari ごはん?", options: { A: "Nasi atau makanan", B: "Buku", C: "Rumah", D: "Daging" }, answer: "A", explanation: "ごはん (gohan) berarti nasi atau makanan secara umum." },
+      { id: 5, question: "Apa arti dari がっこう?", options: { A: "Rumah sakit", B: "Sekolah", C: "Stasiun", D: "Taman" }, answer: "B", explanation: "がっこう (gakkou) berarti sekolah." },
+      { id: 6, question: "Apa arti dari ともだち?", options: { A: "Guru", B: "Keluarga", C: "Teman", D: "Tetangga" }, answer: "C", explanation: "ともだち (tomodachi) berarti teman." },
+      { id: 7, question: "Apa arti dari せんせい?", options: { A: "Guru", B: "Murid", C: "Teman", D: "Dokter" }, answer: "A", explanation: "せんせい (sensei) berarti guru / pengajar." },
+      { id: 8, question: "Apa arti dari ほん?", options: { A: "Pensil", B: "Buku", C: "Tas", D: "Meja" }, answer: "B", explanation: "ほん (hon) berarti buku." },
+      { id: 9, question: "Apa arti dari いえ?", options: { A: "Toko", B: "Sekolah", C: "Rumah", D: "Kamar" }, answer: "C", explanation: "いえ (ie) berarti rumah." },
+      { id: 10, question: "Apa arti dari くるま?", options: { A: "Mobil", B: "Sepeda", C: "Kereta", D: "Pesawat" }, answer: "A", explanation: "くるま (kuruma) berarti mobil." },
+      { id: 11, question: "Apa arti dari でんしゃ?", options: { A: "Pesawat", B: "Kereta", C: "Bus", D: "Kapal" }, answer: "B", explanation: "でんしゃ (densha) berarti kereta listrik." },
+      { id: 12, question: "Apa arti dari ねこ?", options: { A: "Anjing", B: "Burung", C: "Kucing", D: "Kelinci" }, answer: "C", explanation: "ねこ (neko) berarti kucing." },
+      { id: 13, question: "Apa arti dari いぬ?", options: { A: "Anjing", B: "Kucing", C: "Ikan", D: "Kuda" }, answer: "A", explanation: "いぬ (inu) berarti anjing." },
+      { id: 14, question: "Apa arti dari たべもの?", options: { A: "Minuman", B: "Makanan", C: "Pakaian", D: "Buah" }, answer: "B", explanation: "たべもの (tabemono) berarti makanan." },
+      { id: 15, question: "Apa arti dari のみもの?", options: { A: "Makanan", B: "Buah", C: "Minuman", D: "Sayur" }, answer: "C", explanation: "のみもの (nomimono) berarti minuman." },
+      { id: 16, question: "Apa arti dari きょう?", options: { A: "Hari ini", B: "Kemarin", C: "Besok", D: "Lusa" }, answer: "A", explanation: "きょう (kyou) berarti hari ini." },
+      { id: 17, question: "Apa arti dari あした?", options: { A: "Kemarin", B: "Besok", C: "Hari ini", D: "Minggu depan" }, answer: "B", explanation: "あした (ashita) berarti besok." },
+      { id: 18, question: "Apa arti dari きのう?", options: { A: "Besok", B: "Hari ini", C: "Kemarin", D: "Bulan lalu" }, answer: "C", explanation: "きのう (kinou) berarti kemarin." },
+      { id: 19, question: "Apa arti dari いま?", options: { A: "Sekarang", B: "Nanti", C: "Kemarin", D: "Dulu" }, answer: "A", explanation: "いま (ima) berarti sekarang." },
+      { id: 20, question: "Apa arti dari おかね?", options: { A: "Waktu", B: "Uang", C: "Air", D: "Surat" }, answer: "B", explanation: "おかね (okane) berarti uang." },
+      { id: 21, question: "Apa arti dari たべます?", options: { A: "Tidur", B: "Makan", C: "Minum", D: "Memasak" }, answer: "B", explanation: "たべます (tabemasu) berarti makan." },
+      { id: 22, question: "Apa arti dari のみます?", options: { A: "Minum", B: "Membaca", C: "Pergi", D: "Melihat" }, answer: "A", explanation: "のみます (nomimasu) berarti minum." },
+      { id: 23, question: "Apa arti dari ねます?", options: { A: "Bangun", B: "Belajar", C: "Tidur", D: "Duduk" }, answer: "C", explanation: "ねます (nemasu) berarti tidur." },
+      { id: 24, question: "Apa arti dari おきます?", options: { A: "Tidur", B: "Bangun", C: "Pulang", D: "Mandi" }, answer: "B", explanation: "おきます (okimasu) berarti bangun tidur." },
+      { id: 25, question: "Apa arti dari いきます?", options: { A: "Pergi", B: "Datang", C: "Pulang", D: "Lari" }, answer: "A", explanation: "いきます (ikimasu) berarti pergi." },
+      { id: 26, question: "Apa arti dari きます?", options: { A: "Membeli", B: "Pulang", C: "Datang", D: "Masuk" }, answer: "C", explanation: "きます (kimasu) berarti datang." },
+      { id: 27, question: "Apa arti dari かえります?", options: { A: "Pergi", B: "Pulang", C: "Membaca", D: "Keluar" }, answer: "B", explanation: "かえります (kaerimasu) berarti pulang." },
+      { id: 28, question: "Apa arti dari みます?", options: { A: "Melihat atau menonton", B: "Mendengar", C: "Menulis", D: "Membaca" }, answer: "A", explanation: "みます (mimasu) berarti melihat/menonton." },
+      { id: 29, question: "Apa arti dari ききます?", options: { A: "Berbicara", B: "Membeli", C: "Mendengar atau bertanya", D: "Melihat" }, answer: "C", explanation: "ききます (kikimasu) berarti mendengar / bertanya." },
+      { id: 30, question: "Apa arti dari よみます?", options: { A: "Menulis", B: "Membaca", C: "Berbicara", D: "Menyanyi" }, answer: "B", explanation: "よみます (yomimasu) berarti membaca." },
+      { id: 31, question: "Apa arti dari かきます?", options: { A: "Menulis", B: "Membaca", C: "Mendengar", D: "Menggambar" }, answer: "A", explanation: "かきます (kakimasu) berarti menulis/menggambar." },
+      { id: 32, question: "Apa arti dari はなします?", options: { A: "Tidur", B: "Makan", C: "Berbicara", D: "Berjalan" }, answer: "C", explanation: "はなします (hanashimasu) berarti berbicara." },
+      { id: 33, question: "Apa arti dari べんきょうします?", options: { A: "Bekerja", B: "Belajar", C: "Bermain", D: "Istirahat" }, answer: "B", explanation: "べんきょうします (benkyou shimasu) berarti belajar." },
+      { id: 34, question: "Apa arti dari はたらきます?", options: { A: "Bekerja", B: "Belajar", C: "Berjalan", D: "Berlari" }, answer: "A", explanation: "はたらきます (hatarakimasu) berarti bekerja." },
+      { id: 35, question: "Apa arti dari かいます?", options: { A: "Menjual", B: "Membaca", C: "Membeli", D: "Meminjam" }, answer: "C", explanation: "かいます (kaimasu) berarti membeli." },
+      { id: 36, question: "Apa arti dari あいます?", options: { A: "Makan", B: "Bertemu", C: "Tidur", D: "Telepon" }, answer: "B", explanation: "あいます (aimasu) berarti bertemu." },
+      { id: 37, question: "Apa arti dari まちます?", options: { A: "Menunggu", B: "Berjalan", C: "Berbicara", D: "Mencari" }, answer: "A", explanation: "まちます (machimasu) berarti menunggu." },
+      { id: 38, question: "Apa arti dari つくります?", options: { A: "Menggunakan", B: "Membuka", C: "Membuat", D: "Mencuci" }, answer: "C", explanation: "つくります (tsukurimasu) berarti membuat." },
+      { id: 39, question: "Apa arti dari あそびます?", options: { A: "Belajar", B: "Bermain", C: "Bekerja", D: "Berenang" }, answer: "B", explanation: "あそびます (asobimasu) berarti bermain." },
+      { id: 40, question: "Apa arti dari わかります?", options: { A: "Mengerti", B: "Lupa", C: "Membeli", D: "Ingat" }, answer: "A", explanation: "わかります (wakarimasu) berarti mengerti/paham." },
+      
+      { id: 41, question: "Manakah hiragana untuk bunyi 'a'?", options: { A: "い", B: "あ", C: "う", D: "え" }, answer: "B", explanation: "あ adalah huruf hiragana untuk karakter vokal 'a'." },
+      { id: 42, question: "Manakah hiragana untuk bunyi 'ki'?", options: { A: "き", B: "さ", C: "ち", D: "け" }, answer: "A", explanation: "き adalah huruf hiragana untuk bunyi 'ki'." },
+      { id: 43, question: "Manakah hiragana untuk bunyi 'su'?", options: { A: "せ", B: "し", C: "す", D: "そ" }, answer: "C", explanation: "す adalah huruf hiragana untuk bunyi 'su'." },
+      { id: 44, question: "Manakah hiragana untuk bunyi 'ne'?", options: { A: "ぬ", B: "ね", C: "の", D: "な" }, answer: "B", explanation: "ね adalah huruf hiragana untuk bunyi 'ne'." },
+      { id: 45, question: "Manakah hiragana untuk bunyi 'ho'?", options: { A: "ほ", B: "は", C: "へ", D: "ひ" }, answer: "A", explanation: "ほ adalah huruf hiragana untuk bunyi 'ho'." },
+      { id: 46, question: "Manakah hiragana untuk bunyi 'mu'?", options: { A: "め", B: "も", C: "む", D: "ま" }, answer: "C", explanation: "む adalah huruf hiragana untuk bunyi 'mu'." },
+      { id: 47, question: "Manakah hiragana untuk bunyi 'ri'?", options: { A: "る", B: "り", C: "れ", D: "ろ" }, answer: "B", explanation: "り adalah huruf hiragana untuk bunyi 'ri'." },
+      { id: 48, question: "Manakah hiragana untuk bunyi 'yo'?", options: { A: "よ", B: "や", C: "ゆ", D: "わ" }, answer: "A", explanation: "よ adalah huruf hiragana untuk bunyi 'yo'." },
+      { id: 49, question: "Manakah hiragana untuk bunyi 'wa'?", options: { A: "を", B: "ん", C: "わ", D: "あ" }, answer: "C", explanation: "わ adalah huruf hiragana untuk bunyi 'wa'." },
+      { id: 50, question: "Manakah hiragana untuk bunyi 'tsu'?", options: { A: "て", B: "つ", C: "と", D: "た" }, answer: "B", explanation: "つ adalah huruf hiragana untuk bunyi 'tsu'." },
+      { id: 51, question: "Bagaimana membaca さかな?", options: { A: "Sakana", B: "Sakani", C: "Sakane", D: "Sakata" }, answer: "A", explanation: "さかな dibaca Sakana (berarti ikan)." },
+      { id: 52, question: "Bagaimana membaca やま?", options: { A: "Yami", B: "Yuma", C: "Yama", D: "Yomi" }, answer: "C", explanation: "やま dibaca Yama (berarti gunung)." },
+      { id: 53, question: "Bagaimana membaca そら?", options: { A: "Sorae", B: "Sora", C: "Sura", D: "Siro" }, answer: "B", explanation: "そら dibaca Sora (berarti langit)." },
+      { id: 54, question: "Bagaimana membaca はな?", options: { A: "Hana", B: "Hane", C: "Hina", D: "Hono" }, answer: "A", explanation: "はな dibaca Hana (berarti bunga / hidung)." },
+      { id: 55, question: "Bagaimana membaca くち?", options: { A: "Kuchi", B: "Kutsu", C: "Kuchī", D: "Kachi" }, answer: "A", explanation: "くち dibaca Kuchi (berarti mulut)." },
+      { id: 56, question: "Bagaimana membaca みみ?", options: { A: "Mimi", B: "Mame", C: "Mumu", D: "Momi" }, answer: "A", explanation: "みみ dibaca Mimi (berarti telinga)." },
+      { id: 57, question: "Bagaimana membaca あたま?", options: { A: "Atama", B: "Atami", C: "Atamu", D: "Atome" }, answer: "A", explanation: "あたま dibaca Atama (berarti kepala)." },
+      { id: 58, question: "Bagaimana membaca からだ?", options: { A: "Karada", B: "Korada", C: "Kurada", D: "Karade" }, answer: "A", explanation: "からだ dibaca Karada (berarti tubuh/badan)." },
+      { id: 59, question: "Bagaimana membaca でんわ?", options: { A: "Denwa", B: "Dengwa", C: "Denha", D: "Denwo" }, answer: "A", explanation: "でんわ dibaca Denwa (berarti telepon)." },
+      { id: 60, question: "Bagaimana membaca じかん?", options: { A: "Jikan", B: "Jiken", C: "Jukan", D: "Jikon" }, answer: "A", explanation: "じかん dibaca Jikan (berarti waktu/jam)." },
+      { id: 61, question: "わたし ___ がくせいです。", options: { A: "を", B: "は", C: "に", D: "で" }, answer: "B", explanation: "Partikel は (wa) menunjukkan subjek topik kalimat." },
+      { id: 62, question: "みず ___ のみます。", options: { A: "を", B: "は", C: "で", D: "に" }, answer: "A", explanation: "Partikel を (o) menandai objek penderita dari kata kerja." },
+      { id: 63, question: "がっこう ___ いきます。", options: { A: "を", B: "が", C: "に", D: "で" }, answer: "C", explanation: "Partikel に (ni) menandai arah/tujuan perpindahan." },
+      { id: 64, question: "ともだち ___ あいます。", options: { A: "に", B: "を", C: "で", D: "へ" }, answer: "A", explanation: "Partikel に (ni) digunakan bersama kata kerja あいます (bertemu)." },
+      { id: 65, question: "うち ___ べんきょうします。", options: { A: "に", B: "で", C: "を", D: "へ" }, answer: "B", explanation: "Partikel で (de) menandai tempat berlangsungnya kegiatan." },
+      { id: 66, question: "これは ___ です。", options: { A: "ほん", B: "たべます", C: "いきます", D: "ねます" }, answer: "A", explanation: "ほん (buku) adalah kata benda yang tepat." },
+      { id: 67, question: "わたしは ごはんを ___。", options: { A: "の机制", B: "ねます", C: "たべます", D: "いきます" }, answer: "C", explanation: "たべます (makan) adalah kata kerja yang cocok untuk ごはん (nasi/makanan)." },
+      { id: 68, question: "まいにち がっこうへ ___。", options: { A: "いきます", B: "たべます", C: "かきます", D: "ねます" }, answer: "A", explanation: "いきます (pergi) adalah kata kerja perpindahan yang tepat." },
+      { id: 69, question: "よる 11じに ___。", options: { A: "おきます", B: "ねます", C: "きます", D: "かいます" }, answer: "B", explanation: "ねます (tidur) adalah aktivitas yang tepat pada jam 11 malam." },
+      { id: 70, question: "あさ 7じに ___。", options: { A: "ねます", B: "かえります", C: "おきます", D: "あそびます" }, answer: "C", explanation: "おきます (bangun) adalah aktivitas pagi hari." },
+      { id: 71, question: "ほんを ___。", options: { A: "よみます", B: "の机制", C: "あいます", D: "ねます" }, answer: "A", explanation: "よみます (membaca) adalah kata kerja untuk ほん (buku)." },
+      { id: 72, question: "てがみを ___。", options: { A: "みます", B: "かきます", C: "ききます", D: "たべます" }, answer: "B", explanation: "かきます (menulis) cocok untuk てがみ (surat)." },
+      { id: 73, question: "おんがくを ___。", options: { A: "たべます", B: "いきます", C: "ききます", D: "ねます" }, answer: "C", explanation: "ききます (mendengar) adalah kata kerja untuk おんがく (musik)." },
+      { id: 74, question: "ともだちと ___。", options: { A: "はなします", B: "ねます", C: "の机制", D: "かきます" }, answer: "A", explanation: "はなします (berbicara) cocok digunakan dengan と (bersama)." },
+      { id: 75, question: "みせで りんごを ___。", options: { A: "よみます", B: "かいます", C: "ねます", D: "おきます" }, answer: "B", explanation: "かいます (membeli) cocok untuk dilakukan di toko (みせ)." },
+      { id: 76, question: "せんせいは がっこうに ___。", options: { A: "います", B: "あります", C: "たべます", D: "の机制" }, answer: "A", explanation: "います digunakan untuk keberadaan benda hidup (orang/guru)." },
+      { id: 77, question: "つくえのうえに ほんが ___。", options: { A: "います", B: "いきます", C: "あります", D: "きます" }, answer: "C", explanation: "あります digunakan untuk keberadaan benda mati (buku)." },
+      { id: 78, question: "これは わたし ___ かばんです。", options: { A: "の", B: "を", C: "に", D: "で" }, answer: "A", explanation: "Partikel の (no) menunjukkan kepemilikan." },
+      { id: 79, question: "あした ともだち ___ あいます。", options: { A: "を", B: "に", C: "で", D: "へ" }, answer: "B", explanation: "Partikel に menandai orang yang ditemui (あいます)." },
+      { id: 80, question: "まいあさ みず ___ のみます。", options: { A: "が", B: "で", C: "を", D: "に" }, answer: "C", explanation: "Partikel を menandai objek air (みず) yang diminum." },
+      { id: 81, question: "Apa arti dari ください?", options: { A: "Silakan berikan", B: "Selamat tinggal", C: "Terima kasih", D: "Permisi" }, answer: "A", explanation: "ください (kudasai) berarti tolong berikan / silakan." },
+      { id: 82, question: "Apa arti dari ありがとう?", options: { A: "Maaf", B: "Terima kasih", C: "Permisi", D: "Selamat pagi" }, answer: "B", explanation: "ありがとう (arigatou) berarti terima kasih." },
+      { id: 83, question: "Apa arti dari すみません?", options: { A: "Selamat pagi", B: "Sampai jumpa", C: "Permisi atau maaf", D: "Sama-sama" }, answer: "C", explanation: "すみません (sumimasen) berarti permisi / maaf." },
+      { id: 84, question: "Apa arti dari おはよう?", options: { A: "Selamat pagi", B: "Selamat malam", C: "Selamat siang", D: "Selamat tidur" }, answer: "A", explanation: "おはよう (ohayou) berarti selamat pagi." },
+      { id: 85, question: "Apa arti dari こんばんは?", options: { A: "Selamat pagi", B: "Selamat malam", C: "Selamat tinggal", D: "Selamat siang" }, answer: "B", explanation: "こんばんは (konbanwa) berarti selamat malam." },
+      { id: 86, question: "Apa arti dari さようなら?", options: { A: "Terima kasih", B: "Permisi", C: "Selamat tinggal", D: "Halo" }, answer: "C", explanation: "さようなら (sayounara) berarti selamat tinggal." },
+      { id: 87, question: "Apa arti dari どうぞ?", options: { A: "Silakan", B: "Tidak", C: "Mengapa", D: "Sama-sama" }, answer: "A", explanation: "どうぞ (douzo) berarti silakan." },
+      { id: 88, question: "Apa arti dari どこ?", options: { A: "Kapan", B: "Di mana", C: "Siapa", D: "Mengapa" }, answer: "B", explanation: "どこ (doko) berarti di mana." },
+      { id: 89, question: "Apa arti dari いつ?", options: { A: "Siapa", B: "Apa", C: "Kapan", D: "Bagaimana" }, answer: "C", explanation: "いつ (itsu) berarti kapan." },
+      { id: 90, question: "Apa arti dari だれ?", options: { A: "Siapa", B: "Di mana", C: "Mengapa", D: "Berapa" }, answer: "A", explanation: "だれ (dare) berarti siapa." },
+      { id: 91, question: "Apa arti dari なに?", options: { A: "Kapan", B: "Apa", C: "Siapa", D: "Kemana" }, answer: "B", explanation: "なに (nani) berarti apa." },
+      { id: 92, question: "Apa arti dari どうして?", options: { A: "Di mana", B: "Siapa", C: "Mengapa", D: "Berapa" }, answer: "C", explanation: "どうして (doushite) berarti mengapa/kenapa." },
+      { id: 93, question: "Apa arti dari いくら?", options: { A: "Berapa harga", B: "Jam berapa", C: "Berapa orang", D: "Berapa lama" }, answer: "A", explanation: "いくら (ikura) berarti berapa harganya." },
+      { id: 94, question: "Apa arti dari なんじ?", options: { A: "Berapa harga", B: "Jam berapa", C: "Hari apa", D: "Bulan apa" }, answer: "B", explanation: "なんじ (nanji) berarti jam berapa." },
+      { id: 95, question: "Apa arti dari いっしょに?", options: { A: "Sendirian", B: "Besok", C: "Bersama-sama", D: "Nanti" }, answer: "C", explanation: "いっしょに (isshoni) berarti bersama-sama." },
+      { id: 96, question: "Apa arti dari ちょっと?", options: { A: "Sedikit atau sebentar", B: "Sangat", C: "Selalu", D: "Banyak" }, answer: "A", explanation: "ちょっと (chotto) berarti sebentar / sedikit." },
+      { id: 97, question: "Apa arti dari たくさん?", options: { A: "Sedikit", B: "Banyak", C: "Cepat", D: "Lambat" }, answer: "B", explanation: "たくさん (takusan) berarti banyak." },
+      { id: 98, question: "Apa arti dari はやく?", options: { A: "Pelan-pelan", B: "Kemarin", C: "Cepat atau lebih awal", D: "Besok" }, answer: "C", explanation: "はやく (hayaku) berarti dengan cepat / lebih awal." },
+      { id: 99, question: "Apa arti dari ゆっくり?", options: { A: "Pelan-pelan", B: "Cepat", C: "Banyak", D: "Sedikit" }, answer: "A", explanation: "ゆっくり (yukkuri) berarti pelan-pelan / santai." },
+      { id: 100, question: "Apa arti dari もういちど?", options: { A: "Sampai besok", B: "Sekali lagi", C: "Terima kasih", D: "Tidak apa-apa" }, answer: "B", explanation: "もういちど (mou ichido) berarti sekali lagi." },
+
+      // --- PART 2 (Questions 101 - 200) ---
+      { id: 101, question: "Apa arti dari かぞく?", options: { A: "Keluarga", B: "Tetangga", C: "Teman", D: "Guru" }, answer: "A", explanation: "かぞく (kazoku) berarti keluarga." },
+      { id: 102, question: "Apa arti dari ちち?", options: { A: "Kakak perempuan", B: "Ayah sendiri", C: "Ibu sendiri", D: "Kakek" }, answer: "B", explanation: "ちち (chichi) berarti ayah sendiri." },
+      { id: 103, question: "Apa arti dari はは?", options: { A: "Nenek", B: "Anak perempuan", C: "Ibu sendiri", D: "Bibi" }, answer: "C", explanation: "はは (haha) berarti ibu sendiri." },
+      { id: 104, question: "Apa arti dari あに?", options: { A: "Kakak laki-laki sendiri", B: "Adik laki-laki sendiri", C: "Paman", D: "Ayah" }, answer: "A", explanation: "あに (ani) berarti kakak laki-laki sendiri." },
+      { id: 105, question: "Apa arti dari あね?", options: { A: "Adik perempuan", B: "Kakak perempuan sendiri", C: "Bibi", D: "Ibu" }, answer: "B", explanation: "あね (ane) berarti kakak perempuan sendiri." },
+      { id: 106, question: "Apa arti dari おとうと?", options: { A: "Kakak laki-laki", B: "Sepupu laki-laki", C: "Adik laki-laki sendiri", D: "Paman" }, answer: "C", explanation: "おとうと (otouto) berarti adik laki-laki sendiri." },
+      { id: 107, question: "Apa arti dari いもうと?", options: { A: "Adik perempuan sendiri", B: "Kakak perempuan", C: "Ibu", D: "Nenek" }, answer: "A", explanation: "いもうと (imouto) berarti adik perempuan sendiri." },
+      { id: 108, question: "Apa arti dari こども?", options: { A: "Orang tua", B: "Anak", C: "Guru", D: "Bayi" }, answer: "B", explanation: "こども (kodomo) berarti anak-anak." },
+      { id: 109, question: "Apa arti dari おとな?", options: { A: "Bayi", B: "Remaja", C: "Orang dewasa", D: "Kakek" }, answer: "C", explanation: "おとな (otona) berarti orang dewasa." },
+      { id: 110, question: "Apa arti dari おとこ?", options: { A: "Laki-laki", B: "Perempuan", C: "Anak kecil", D: "Kakek" }, answer: "A", explanation: "おとこ (otoko) berarti laki-laki." },
+      { id: 111, question: "Apa arti dari おんな?", options: { A: "Laki-laki", B: "Perempuan", C: "Kakek", D: "Paman" }, answer: "B", explanation: "おんな (onna) berarti perempuan." },
+      { id: 112, question: "Apa arti dari まち?", options: { A: "Gunung", B: "Laut", C: "Kota", D: "Desa" }, answer: "C", explanation: "まち (machi) berarti kota / kota kecil." },
+      { id: 113, question: "Apa arti dari ぎんこう?", options: { A: "Bank", B: "Pasar", C: "Perpustakaan", D: "Stasiun" }, answer: "A", explanation: "ぎんこう (ginkou) berarti bank." },
+      { id: 114, question: "Apa arti dari ゆうびんきょく?", options: { A: "Rumah sakit", B: "Kantor pos", C: "Kantor polisi", D: "Bandara" }, answer: "B", explanation: "ゆうびんきょく (yuubinkyoku) berarti kantor pos." },
+      { id: 115, question: "Apa arti dari としょかん?", options: { A: "Ruang kelas", B: "Restoran", C: "Perpustakaan", D: "Hotel" }, answer: "C", explanation: "としょかん (toshokan) berarti perpustakaan." },
+      { id: 116, question: "Apa arti dari こうえん?", options: { A: "Taman", B: "Bandara", C: "Stasiun", D: "Pasar" }, answer: "A", explanation: "こうえん (kouen) berarti taman umum." },
+      { id: 117, question: "Apa arti dari きっさてん?", options: { A: "Toko pakaian", B: "Kedai kopi / kafe", C: "Rumah sakit", D: "Apotek" }, answer: "B", explanation: "きっさてん (kissaten) berarti kedai kopi / kafe." },
+      { id: 118, question: "Apa arti dari びょういん?", options: { A: "Sekolah", B: "Bank", C: "Rumah sakit", D: "Salon" }, answer: "C", explanation: "びょういん (byouin) berarti rumah sakit." },
+      { id: 119, question: "Apa arti dari へや?", options: { A: "Kamar", B: "Jalan", C: "Jendela", D: "Atap" }, answer: "A", explanation: "へや (heya) berarti kamar / ruangan." },
+      { id: 120, question: "Apa arti dari まど?", options: { A: "Pintu", B: "Jendela", C: "Lantai", D: "Dinding" }, answer: "B", explanation: "まど (mado) berarti jendela." },
+      { id: 121, question: "Apa arti dari つかいます?", options: { A: "Meminjam", B: "Menjual", C: "Menggunakan", D: "Membeli" }, answer: "C", explanation: "つかいます (tsukaimasu) berarti menggunakan/memakai." },
+      { id: 122, question: "Apa arti dari あけます?", options: { A: "Membuka", B: "Menutup", C: "Menghapus", D: "Mencuci" }, answer: "A", explanation: "あけます (akemasu) berarti membuka (pintu/jendela)." },
+      { id: 123, question: "Apa arti dari しめます?", options: { A: "Membuka", B: "Menutup", C: "Membeli", D: "Mengunci" }, answer: "B", explanation: "しめます (shimemasu) berarti menutup." },
+      { id: 124, question: "Apa arti dari はいります?", options: { A: "Keluar", B: "Berlari", C: "Masuk", D: "Duduk" }, answer: "C", explanation: "はいります (hairimasu) berarti masuk." },
+      { id: 125, question: "Apa arti dari でます?", options: { A: "Keluar", B: "Masuk", C: "Duduk", D: "Berdiri" }, answer: "A", explanation: "でます (demasu) berarti keluar." },
+      { id: 126, question: "Apa arti dari のります?", options: { A: "Turun kendaraan", B: "Naik kendaraan", C: "Berjalan kaki", D: "Menyetir" }, answer: "B", explanation: "のります (norimasu) berarti naik kendaraan." },
+      { id: 127, question: "Apa arti dari おります?", options: { A: "Naik kendaraan", B: "Membawa", C: "Turun kendaraan", D: "Berhenti" }, answer: "C", explanation: "おります (orimasu) berarti turun dari kendaraan." },
+      { id: 128, question: "Apa arti dari およぎます?", options: { A: "Berenang", B: "Menari", C: "Berjalan", D: "Melompat" }, answer: "A", explanation: "およぎます (oyogimasu) berarti berenang." },
+      { id: 129, question: "Apa arti dari あるきます?", options: { A: "Berlari", B: "Berjalan", C: "Melompat", D: "Duduk" }, answer: "B", explanation: "あるきます (arukimasu) berarti berjalan kaki." },
+      { id: 130, question: "Apa arti dari はしります?", options: { A: "Duduk", B: "Berenang", C: "Berlari", D: "Terbang" }, answer: "C", explanation: "はしります (hashirimasu) berarti berlari." },
+      { id: 131, question: "Apa arti dari おしえます?", options: { A: "Mengajar / memberi tahu", B: "Belajar", C: "Mendengarkan", D: "Menulis" }, answer: "A", explanation: "おしえます (oshiemasu) berarti mengajar atau memberi tahu." },
+      { id: 132, question: "Apa arti dari ならいます?", options: { A: "Mengajar", B: "Belajar dari seseorang", C: "Menggambar", D: "Membaca" }, answer: "B", explanation: "ならいます (naraimasu) berarti belajar dari orang lain." },
+      { id: 133, question: "Apa arti dari かします?", options: { A: "Meminjam", B: "Membeli", C: "Meminjamkan", D: "Mengembalikan" }, answer: "C", explanation: "かします (kashimasu) berarti meminjamkan." },
+      { id: 134, question: "Apa arti dari かります?", options: { A: "Meminjam", B: "Meminjamkan", C: "Mengembalikan", D: "Menjual" }, answer: "A", explanation: "かります (karimasu) berarti meminjam." },
+      { id: 135, question: "Apa arti dari だします?", options: { A: "Memasukkan", B: "Mengeluarkan / mengirim", C: "Menyembunyikan", D: "Mengambil" }, answer: "B", explanation: "だします (dashimasu) berarti mengeluarkan/mengirim surat." },
+      { id: 136, question: "Apa arti dari いれます?", options: { A: "Mengeluarkan", B: "Menutup", C: "Memasukkan", D: "Mengambil" }, answer: "C", explanation: "いれます (iremasu) berarti memasukkan." },
+      { id: 137, question: "Apa arti dari なくします?", options: { A: "Menghilangkan / kehilangan", B: "Menemukan", C: "Menyimpan", D: "Merusak" }, answer: "A", explanation: "なくします (nakushimasu) berarti menghilangkan/kehilangan." },
+      { id: 138, question: "Apa arti dari さがします?", options: { A: "Menunggu", B: "Mencari", C: "Mengajar", D: "Melihat" }, answer: "B", explanation: "さがします (sagashimasu) berarti mencari." },
+      { id: 139, question: "Apa arti dari てつだいます?", options: { A: "Mengganggu", B: "Memanggil", C: "Membantu", D: "Menjawab" }, answer: "C", explanation: "てつだいます (tetsudaimasu) berarti membantu." },
+      { id: 140, question: "Apa arti dari とります?", options: { A: "Mengambil", B: "Mengembalikan", C: "Meminjamkan", D: "Menyimpan" }, answer: "A", explanation: "とります (torimasu) berarti mengambil." },
+      { id: 141, question: "Apa arti dari あつい?", options: { A: "Dingin", B: "Panas", C: "Gelap", D: "Terang" }, answer: "B", explanation: "あつい (atsui) berarti panas (cuaca/suhu)." },
+      { id: 142, question: "Apa arti dari さむい?", options: { A: "Hangat", B: "Panas", C: "Dingin (cuaca)", D: "Sejuk" }, answer: "C", explanation: "さむい (samui) berarti dingin untuk suhu cuaca." },
+      { id: 143, question: "Apa arti dari つめたい?", options: { A: "Dingin (disentuh)", B: "Panas", C: "Lembut", D: "Keras" }, answer: "A", explanation: "つめたい (tsumetai) berarti dingin saat disentuh/benda." },
+      { id: 144, question: "Apa arti dari あたたかい?", options: { A: "Berisik", B: "Hangat", C: "Mahal", D: "Murah" }, answer: "B", explanation: "あたたかい (atatakai) berarti hangat." },
+      { id: 145, question: "Apa arti dari おおきい?", options: { A: "Kecil", B: "Pendek", C: "Besar", D: "Tinggi" }, answer: "C", explanation: "おおきい (ookii) berarti besar." },
+      { id: 146, question: "Apa arti dari ちいさい?", options: { A: "Kecil", B: "Besar", C: "Panjang", D: "Luas" }, answer: "A", explanation: "ちいさい (chiisai) berarti kecil." },
+      { id: 147, question: "Apa arti dari ながい?", options: { A: "Pendek", B: "Panjang", C: "Tebal", D: "Tipis" }, answer: "B", explanation: "ながい (nagai) berarti panjang." },
+      { id: 148, question: "Apa arti dari みじかい?", options: { A: "Tinggi", B: "Berat", C: "Pendek", D: "Rendah" }, answer: "C", explanation: "みじかい (mijikai) berarti pendek (ukuran panjang)." },
+      { id: 149, question: "Apa arti dari たかい?", options: { A: "Murah", B: "Tinggi / Mahal", C: "Rendah", D: "Pendek" }, answer: "B", explanation: "たかい (takai) berarti tinggi atau mahal." },
+      { id: 150, question: "Apa arti dari やすい?", options: { A: "Mahal", B: "Sulit", C: "Murah", D: "Mudah" }, answer: "C", explanation: "やすい (yasui) berarti murah." },
+      { id: 151, question: "Apa arti dari あたらしい?", options: { A: "Baru", B: "Lama / Kuno", C: "Bagus", D: "Jelek" }, answer: "A", explanation: "あたらしい (atarashii) berarti baru." },
+      { id: 152, question: "Apa arti dari ふるい?", options: { A: "Baru", B: "Lama / Tua (benda)", C: "Indah", D: "Bersih" }, answer: "B", explanation: "ふるい (furui) berarti lama/tua (untuk benda)." },
+      { id: 153, question: "Apa arti dari いい?", options: { A: "Jelek", B: "Bagus / Baik", C: "Jauh", D: "Dekat" }, answer: "B", explanation: "いい (ii/yoi) berarti bagus atau baik." },
+      { id: 154, question: "Apa arti dari わるい?", options: { A: "Buruk / Jelek", B: "Bagus", C: "Terang", D: "Bersih" }, answer: "A", explanation: "わるい (warui) berarti buruk / jelek." },
+      { id: 155, question: "Apa arti dari むずかしい?", options: { A: "Mudah", B: "Sulit / Sukar", C: "Cepat", D: "Lambat" }, answer: "B", explanation: "むずかしい (muzukashii) berarti sulit / sukar." },
+      { id: 156, question: "Apa arti dari やさしい?", options: { A: "Sulit", B: "Mudah / Ramah", C: "Panas", D: "Mahal" }, answer: "B", explanation: "やさしい (yasashii) berarti mudah atau ramah/baik hati." },
+      { id: 157, question: "Apa arti dari おいしい?", options: { A: "Pahit", B: "Hambar", C: "Enak / Lezat", D: "Pedas" }, answer: "C", explanation: "おいしい (oishii) berarti enak / lezat." },
+      { id: 158, question: "Apa arti dari たのしい?", options: { A: "Sedih", B: "Menyenangkan", C: "Membosankan", D: "Takut" }, answer: "B", explanation: "たのしい (tanoshii) berarti menyenangkan." },
+      { id: 159, question: "Apa arti dari いそがしい?", options: { A: "Senggang", B: "Lapar", C: "Sibuk", D: "Lelah" }, answer: "C", explanation: "いそがしい (isogashii) berarti sibuk." },
+      { id: 160, question: "Apa arti dari ひま?", options: { A: "Senggang / Luang", B: "Sibuk", C: "Cepat", D: "Sepi" }, answer: "A", explanation: "ひま (hima) berarti waktu senggang / luang." },
+      { id: 161, question: "Apa arti kata sifat すき?", options: { A: "Benci", B: "Suka", C: "Pandai", D: "Bisa" }, answer: "B", explanation: "すき (suki) berarti suka." },
+      { id: 162, question: "Apa arti kata sifat きらい?", options: { A: "Suka", B: "Cantik", C: "Benci / Tidak suka", D: "Bersih" }, answer: "C", explanation: "きらい (kirai) berarti benci / tidak suka." },
+      { id: 163, question: "Apa arti dari じょうず?", options: { A: "Mahir / Pandai", B: "Tidakhir", C: "Tinggi", D: "Kuat" }, answer: "A", explanation: "じょうず (jouzu) berarti mahir / pandai." },
+      { id: 164, question: "Apa arti dari へた?", options: { A: "Pandai", B: "Tidak mahir / Payah", C: "Rajin", D: "Pintar" }, answer: "B", explanation: "へた (heta) berarti tidak mahir / kurang pandai." },
+      { id: 165, question: "Berapa jumlah dari ひとつ?", options: { A: "1 buah", B: "2 buah", C: "3 buah", D: "4 buah" }, answer: "A", explanation: "ひとつ (hitotsu) berarti 1 buah (penghitung umum)." },
+      { id: 166, question: "Berapa jumlah dari ふたつ?", options: { A: "1 buah", B: "2 buah", C: "3 buah", D: "5 buah" }, answer: "B", explanation: "ふたつ (futatsu) berarti 2 buah." },
+      { id: 167, question: "Berapa jumlah dari みっつ?", options: { A: "2 buah", B: "3 buah", C: "4 buah", D: "6 buah" }, answer: "B", explanation: "みっつ (mittsu) berarti 3 buah." },
+      { id: 168, question: "Berapa jumlah dari よっつ?", options: { A: "3 buah", B: "4 buah", C: "5 buah", D: "8 buah" }, answer: "B", explanation: "よっつ (yottsu) berarti 4 buah." },
+      { id: 169, question: "Berapa jumlah dari いつつ?", options: { A: "4 buah", B: "5 buah", C: "6 buah", D: "10 buah" }, answer: "B", explanation: "いつつ (itsutsu) berarti 5 buah." },
+      { id: 170, question: "Apa arti dari ひとり?", options: { A: "1 orang", B: "2 orang", C: "3 orang", D: "Sendirian" }, answer: "A", explanation: "ひとり (hitori) berarti 1 orang / sendirian." },
+      { id: 171, question: "Apa arti dari ふたり?", options: { A: "1 orang", B: "2 orang", C: "3 orang", D: "Empat orang" }, answer: "B", explanation: "ふたり (futari) berarti 2 orang." },
+      { id: 172, question: "Apa arti penunjuk arah うえ?", options: { A: "Bawah", B: "Dalam", C: "Atas", D: "Depan" }, answer: "C", explanation: "うえ (ue) berarti atas." },
+      { id: 173, question: "Apa arti penunjuk arah した?", options: { A: "Atas", B: "Bawah", C: "Belakang", D: "Samping" }, answer: "B", explanation: "した (shita) berarti bawah." },
+      { id: 174, question: "Apa arti penunjuk arah なか?", options: { A: "Dalam", B: "Luar", C: "Atas", D: "Kiri" }, answer: "A", explanation: "なか (naka) berarti dalam / tengah." },
+      { id: 175, question: "Apa arti penunjuk arah まえ?", options: { A: "Belakang", B: "Depan", C: "Samping", D: "Kanan" }, answer: "B", explanation: "まえ (mae) berarti depan." },
+      { id: 176, question: "Apa arti penunjuk arah うしろ?", options: { A: "Depan", B: "Belakang", C: "Atas", D: "Bawah" }, answer: "B", explanation: "うしろ (ushiro) berarti belakang." },
+      { id: 177, question: "Apa arti dari となり?", options: { A: "Depan", B: "Samping / Sebelah", C: "Jauh", D: "Dalam" }, answer: "B", explanation: "となり (tonari) berarti samping / sebelah." },
+      { id: 178, question: "Apa arti dari げつようび?", options: { A: "Hari Minggu", B: "Hari Senin", C: "Hari Selasa", D: "Hari Rabu" }, answer: "B", explanation: "げつようび (getsuyoubi) berarti hari Senin." },
+      { id: 179, question: "Apa arti dari かようび?", options: { A: "Hari Senin", B: "Hari Selasa", C: "Hari Kamis", D: "Hari Jumat" }, answer: "B", explanation: "かようび (kayoubi) berarti hari Selasa." },
+      { id: 180, question: "Apa arti dari すいようび?", options: { A: "Hari Rabu", B: "Hari Kamis", C: "Hari Jumat", D: "Hari Sabtu" }, answer: "A", explanation: "すいようび (suiyoubi) berarti hari Rabu." },
+      { id: 181, question: "Apa arti dari もくようび?", options: { A: "Hari Rabu", B: "Hari Kamis", C: "Hari Sabtu", D: "Hari Minggu" }, answer: "B", explanation: "もくようび (mokuyoubi) berarti hari Kamis." },
+      { id: 182, question: "Apa arti dari きんようび?", options: { A: "Hari Kamis", B: "Hari Jumat", C: "Hari Sabtu", D: "Hari Senin" }, answer: "B", explanation: "きんようび (kinyoubi) berarti hari Jumat." },
+      { id: 183, question: "Apa arti dari どようび?", options: { A: "Hari Jumat", B: "Hari Sabtu", C: "Hari Minggu", D: "Hari Selasa" }, answer: "B", explanation: "どようび (doyoubi) berarti hari Sabtu." },
+      { id: 184, question: "Apa arti dari にちようび?", options: { A: "Hari Minggu", B: "Hari Senin", C: "Hari Rabu", D: "Hari Jumat" }, answer: "A", explanation: "にちようび (nichiyoubi) berarti hari Minggu." },
+      { id: 185, question: "Apa arti dari さいふ?", options: { A: "Tas", B: "Dompet", C: "Kunci", D: "Jam" }, answer: "B", explanation: "さいふ (saifu) berarti dompet." },
+      { id: 186, question: "Apa arti dari かぎ?", options: { A: "Kunci", B: "Payung", C: "Topi", D: "Sepatu" }, answer: "A", explanation: "かぎ (kagi) berarti kunci." },
+      { id: 187, question: "Apa arti dari かさ?", options: { A: "Topi", B: "Baju", C: "Payung", D: "Sepatu" }, answer: "C", explanation: "かさ (kasa) berarti payung." },
+      { id: 188, question: "Apa arti dari くつ?", options: { A: "Kaos kaki", B: "Sepatu", C: "Celana", D: "Kacamata" }, answer: "B", explanation: "くつ (kutsu) berarti sepatu." },
+      { id: 189, question: "Apa arti dari とけい?", options: { A: "Jam / Arloji", B: "Cermin", C: "Kamera", D: "Radio" }, answer: "A", explanation: "とけい (tokei) berarti jam / arloji." },
+      { id: 190, question: "Apa arti dari しんぶん?", options: { A: "Majalah", B: "Koran", C: "Kamus", D: "Surat" }, answer: "B", explanation: "しんぶん (shinbun) berarti koran." },
+      { id: 191, question: "Apa arti dari じしょ?", options: { A: "Koran", B: "Kamus", C: "Buku tulis", D: "Peta" }, answer: "B", explanation: "じしょ (jisho) berarti kamus." },
+      { id: 192, question: "Apa arti dari てんき?", options: { A: "Musim", B: "Cuaca", C: "Udara", D: "Hujan" }, answer: "B", explanation: "てんき (tenki) berarti cuaca." },
+      { id: 193, question: "Apa arti dari あめ?", options: { A: "Salju", B: "Angin", C: "Hujan", D: "Awan" }, answer: "C", explanation: "あめ (ame) berarti hujan." },
+      { id: 194, question: "Apa arti dari ゆき?", options: { A: "Hujan", B: "Salju", C: "Petir", D: "Pelangi" }, answer: "B", explanation: "ゆき (yuki) berarti salju." },
+      { id: 195, question: "Apa arti dari うみ?", options: { A: "Danau", B: "Sungai", C: "Laut", D: "Gunung" }, answer: "C", explanation: "うみ (umi) berarti laut." },
+      { id: 196, question: "Apa arti dari かわ?", options: { A: "Sungai", B: "Laut", C: "Hutan", D: "Taman" }, answer: "A", explanation: "かわ (kawa) berarti sungai." },
+      { id: 197, question: "Apa arti dari きっぷ?", options: { A: "Tiket", B: "Paspor", C: "Uang", D: "Kartu" }, answer: "A", explanation: "きっぷ (kippu) berarti tiket." },
+      { id: 198, question: "Apa arti dari にもつ?", options: { A: "Barang bawaan / Bagasi", B: "Hadiah", C: "Surat", D: "Pakaian" }, answer: "A", explanation: "にもつ (nimotsu) berarti barang bawaan / bagasi." },
+      { id: 199, question: "Apa arti dari しゃしん?", options: { A: "Gambar", B: "Foto", C: "Kamera", D: "Cermin" }, answer: "B", explanation: "しゃしん (shashin) berarti foto." },
+      { id: 200, question: "Apa arti dari おみやげ?", options: { A: "Makanan", B: "Oleh-oleh / Souvenir", C: "Hadiah ulang tahun", D: "Uang" }, answer: "B", explanation: "おみやげ (omiyage) berarti oleh-oleh / souvenir." }
+    ];
+
+    const DEFAULT_STATE = {
+      totalXP: 0,
+      level: 1,
+      streak: 0,
+      maxStreak: 0,
+      sessionsCompleted: 0,
+      totalAnswered: 0,
+      totalCorrect: 0,
+      totalWrong: 0,
+      highScore: 0,
+      usedQuestionIds: [],
+      cycleCount: 1,
+      wrongQuestionIds: [],
+      activeSession: null,
+      settings: { sound: true, speech: true, mode: 'exercise', timerSeconds: 30 },
+      badges: { firstStep: false, perfectScore: false, hiraganaMaster: false, persistentLearner: false, nihongoChampion: false }
+    };
+
+    const MOTIVATIONAL_QUOTES = [
+      { jp: "一歩ずつ、がんばりましょう！", id: "Mari berjuang selangkah demi selangkah!" },
+      { jp: "継続は力なり！", id: "Ketekunan adalah kunci kekuatan!" },
+      { jp: "間違いは学びのチャンス！", id: "Kesalahan adalah kesempatan untuk belajar!" },
+      { jp: "今日の努力は明日の成長！", id: "Usaha hari ini adalah perkembangan esok hari!" }
+    ];
+
+    const HIRAGANA_DATA = [
+      { char: 'あ', romaji: 'a' }, { char: 'い', romaji: 'i' }, { char: 'う', romaji: 'u' }, { char: 'え', romaji: 'e' }, { char: 'お', romaji: 'o' },
+      { char: 'か', romaji: 'ka' }, { char: 'き', romaji: 'ki' }, { char: 'く', romaji: 'ku' }, { char: 'け', romaji: 'ke' }, { char: 'こ', romaji: 'ko' },
+      { char: 'さ', romaji: 'sa' }, { char: 'し', romaji: 'shi' }, { char: 'す', romaji: 'su' }, { char: 'せ', romaji: 'se' }, { char: 'そ', romaji: 'so' },
+      { char: 'た', romaji: 'ta' }, { char: 'ち', romaji: 'chi' }, { char: 'つ', romaji: 'tsu' }, { char: 'て', romaji: 'te' }, { char: 'と', romaji: 'to' },
+      { char: 'な', romaji: 'na' }, { char: 'に', romaji: 'ni' }, { char: 'ぬ', romaji: 'nu' }, { char: 'ね', romaji: 'ne' }, { char: 'の', romaji: 'no' },
+      { char: 'は', romaji: 'ha' }, { char: 'ひ', romaji: 'hi' }, { char: 'ふ', romaji: 'fu' }, { char: 'へ', romaji: 'he' }, { char: 'ほ', romaji: 'ho' },
+      { char: 'ま', romaji: 'ma' }, { char: 'み', romaji: 'mi' }, { char: 'む', romaji: 'mu' }, { char: 'め', romaji: 'me' }, { char: 'も', romaji: 'mo' },
+      { char: 'や', romaji: 'ya' }, { char: '', romaji: '' }, { char: 'ゆ', romaji: 'yu' }, { char: '', romaji: '' }, { char: 'よ', romaji: 'yo' },
+      { char: 'ら', romaji: 'ra' }, { char: 'り', romaji: 'ri' }, { char: 'る', romaji: 'ru' }, { char: 'れ', romaji: 're' }, { char: 'ろ', romaji: 'ro' },
+      { char: 'わ', romaji: 'wa' }, { char: '', romaji: '' }, { char: '', romaji: '' }, { char: '', romaji: '' }, { char: 'を', romaji: 'wo' },
+      { char: 'ん', romaji: 'n' }
+    ];
+
+    class NihongoApp {
+      constructor() {
+        this.state = this.loadState();
+        this.audioCtx = null;
+        this.timerInterval = null;
+        this.init();
+      }
+
+      init() {
+        this.renderHeaderStats();
+        this.renderHome();
+        this.renderHiraganaGrid();
+        this.validateQuestionBank();
+      }
+
+      loadState() {
+        try {
+          const saved = localStorage.getItem('nihongo_quest_data');
+          return saved ? { ...DEFAULT_STATE, ...JSON.parse(saved) } : { ...DEFAULT_STATE };
+        } catch (e) {
+          return { ...DEFAULT_STATE };
+        }
+      }
+
+      saveState() {
+        localStorage.setItem('nihongo_quest_data', JSON.stringify(this.state));
+        this.renderHeaderStats();
+      }
+
+      validateQuestionBank() {
+        if (questionBank.length !== 200) {
+          console.warn(`Peringatan: Jumlah bank soal (${questionBank.length}) belum bernilai 200.`);
+        }
+      }
+
+      renderHeaderStats() {
+        document.getElementById('nav-level').textContent = this.state.level;
+        document.getElementById('nav-xp').textContent = this.state.totalXP;
+      }
+
+      navigate(viewId) {
+        document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.btn-nav').forEach(el => el.classList.remove('active'));
+
+        const targetView = document.getElementById(`view-${viewId}`);
+        const targetBtn = document.getElementById(`nav-btn-${viewId}`);
+
+        if (targetView) targetView.classList.add('active');
+        if (targetBtn) targetBtn.classList.add('active');
+
+        if (viewId === 'home') this.renderHome();
+        if (viewId === 'stats') this.renderStats();
+        if (viewId === 'review') this.renderReview();
+      }
+
+      renderHome() {
+        const used = this.state.usedQuestionIds.length;
+        document.getElementById('dash-cycle').textContent = this.state.cycleCount;
+        document.getElementById('dash-used-count').textContent = used;
+        
+        const pct = Math.round((used / 200) * 100);
+        document.getElementById('dash-bank-progress').style.width = `${pct}%`;
+
+        const accuracy = this.state.totalAnswered > 0 
+          ? Math.round((this.state.totalCorrect / this.state.totalAnswered) * 100) 
+          : 0;
+        document.getElementById('dash-accuracy').textContent = `${accuracy}%`;
+        document.getElementById('dash-max-streak').textContent = `${this.state.maxStreak} 🔥`;
+        document.getElementById('dash-wrong-badge').textContent = this.state.wrongQuestionIds.length;
+
+        // Random Mascot Quote
+        const quote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+        document.getElementById('mascot-jp-quote').textContent = quote.jp;
+        document.getElementById('mascot-id-quote').textContent = quote.id;
+      }
+
+      shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      startQuizSession() {
+        // Find unused questions in current cycle
+        let unused = questionBank.filter(q => !this.state.usedQuestionIds.includes(q.id));
+
+        // Reset cycle if all 200 questions were used
+        if (unused.length < 25) {
+          this.state.usedQuestionIds = [];
+          this.state.cycleCount++;
+          unused = [...questionBank];
+        }
+
+        // Shuffle unused and take exactly 25
+        const shuffledPool = this.shuffleArray(unused);
+        const sessionQuestions = shuffledPool.slice(0, 25);
+
+        // Mark these 25 as used
+        const newUsedIds = sessionQuestions.map(q => q.id);
+        this.state.usedQuestionIds.push(...newUsedIds);
+
+        // Prepare active session state
+        this.state.activeSession = {
+          sessionNum: Math.floor((this.state.usedQuestionIds.length - 1) / 25) + 1,
+          questions: sessionQuestions,
+          currentIdx: 0,
+          score: 0,
+          correct: 0,
+          wrong: 0,
+          userAnswers: []
+        };
+
+        this.saveState();
+        this.navigate('quiz');
+        this.renderCurrentQuestion();
+      }
+
+      renderCurrentQuestion() {
+        const session = this.state.activeSession;
+        if (!session) return;
+
+        const q = session.questions[session.currentIdx];
+        const total = session.questions.length;
+
+        document.getElementById('quiz-session-title').textContent = `Sesi ${session.sessionNum} dari 8`;
+        document.getElementById('quiz-question-num').textContent = `Soal ${session.currentIdx + 1} dari ${total}`;
+        
+        const pct = ((session.currentIdx) / total) * 100;
+        document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+
+        document.getElementById('quiz-q-id').textContent = `SOAL UNIK #${q.id}`;
+        document.getElementById('quiz-q-text').textContent = q.question;
+
+        // Hide feedback and next button
+        document.getElementById('quiz-feedback').style.display = 'none';
+        document.getElementById('btn-next-q').style.display = 'none';
+
+        // Shuffle Options dynamically without breaking original correct key
+        const optionsContainer = document.getElementById('quiz-options-container');
+        optionsContainer.innerHTML = '';
+
+        const keys = ['A', 'B', 'C', 'D'];
+        const shuffledKeys = this.shuffleArray(keys);
+
+        shuffledKeys.forEach(originalKey => {
+          if (!q.options[originalKey]) return; // Handle if question had fewer options
+
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.dataset.originalKey = originalKey;
+          btn.innerHTML = `
+            <span class="option-key">${originalKey}</span>
+            <span>${q.options[originalKey]}</span>
+          `;
+          btn.onclick = () => this.handleAnswerSelect(originalKey, btn);
+          optionsContainer.appendChild(btn);
+        });
+
+        // Setup timer if challenge mode
+        if (this.state.settings.mode === 'challenge') {
+          this.startQuestionTimer();
+        } else {
+          document.getElementById('quiz-timer-container').style.display = 'none';
+        }
+      }
+
+      handleAnswerSelect(selectedKey, clickedBtn) {
+        this.stopTimer();
+
+        const session = this.state.activeSession;
+        const q = session.questions[session.currentIdx];
+        const isCorrect = selectedKey === q.answer;
+
+        // Disable all option buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+
+        // Highlight correct and wrong options
+        allBtns.forEach(btn => {
+          if (btn.dataset.originalKey === q.answer) {
+            btn.classList.add('correct');
+          } else if (btn === clickedBtn && !isCorrect) {
+            btn.classList.add('wrong');
+          }
+        });
+
+        // Update Stats & Gamification
+        this.state.totalAnswered++;
+        if (isCorrect) {
+          session.correct++;
+          session.score += 4; // 25 x 4 = 100 max
+          this.state.totalCorrect++;
+          this.state.streak++;
+          if (this.state.streak > this.state.maxStreak) this.state.maxStreak = this.state.streak;
+          
+          this.addXP(4);
+          this.playSound('correct');
+          this.checkStreakNotification();
+        } else {
+          session.wrong++;
+          this.state.totalWrong++;
+          this.state.streak = 0; // Reset streak
+          
+          // Add to wrong questions list for review mode
+          if (!this.state.wrongQuestionIds.includes(q.id)) {
+            this.state.wrongQuestionIds.push(q.id);
+          }
+          this.playSound('wrong');
+        }
+
+        // Display Instant Feedback
+        const feedbackEl = document.getElementById('quiz-feedback');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+
+        feedbackEl.className = `feedback-card ${isCorrect ? 'correct' : 'wrong'}`;
+        feedbackTitle.textContent = isCorrect ? "正解！ — Jawaban Benar!" : "残念！ — Belum Tepat!";
+        feedbackText.textContent = q.explanation || `Jawaban yang benar adalah (${q.answer}).`;
+        feedbackEl.style.display = 'block';
+
+        // Show Next Button
+        const nextBtn = document.getElementById('btn-next-q');
+        if (session.currentIdx === session.questions.length - 1) {
+          nextBtn.textContent = 'Lihat Hasil 🏁';
+        } else {
+          nextBtn.textContent = 'Soal Berikutnya ➔';
+        }
+        nextBtn.style.display = 'inline-flex';
+
+        this.saveState();
+      }
+
+      nextQuestion() {
+        const session = this.state.activeSession;
+        session.currentIdx++;
+
+        if (session.currentIdx >= session.questions.length) {
+          this.finishQuizSession();
+        } else {
+          this.renderCurrentQuestion();
+        }
+      }
+
+      finishQuizSession() {
+        const session = this.state.activeSession;
+        this.state.sessionsCompleted++;
+
+        if (session.score > this.state.highScore) {
+          this.state.highScore = session.score;
+        }
+
+        // Check Badge achievements
+        this.checkBadges();
+        this.saveState();
+
+        // Render Results Screen
+        document.getElementById('res-score').textContent = session.score;
+        document.getElementById('res-correct').textContent = session.correct;
+        document.getElementById('res-wrong').textContent = session.wrong;
+        document.getElementById('res-xp-gained').textContent = `+${session.correct * 4}`;
+
+        let category = "すごい！ Luar Biasa!";
+        if (session.score < 60) category = "あきらめないで！ Jangan Menyerah!";
+        else if (session.score < 75) category = "がんばって！ Terus Berlatih!";
+        else if (session.score < 90) category = "よくできました！ Kerja Bagus!";
+
+        document.getElementById('res-category').textContent = category;
+
+        this.navigate('results');
+      }
+
+      addXP(amount) {
+        this.state.totalXP += amount;
+        // Level up formula: Level N requires N * 100 XP
+        const newLevel = Math.floor(this.state.totalXP / 100) + 1;
+        if (newLevel > this.state.level) {
+          this.state.level = newLevel;
+        }
+        this.renderHeaderStats();
+      }
+
+      checkStreakNotification() {
+        if ([5, 10, 15].includes(this.state.streak)) {
+          const toast = document.getElementById('streak-toast');
+          document.getElementById('streak-count-text').textContent = this.state.streak;
+          toast.style.display = 'flex';
+          setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+      }
+
+      checkBadges() {
+        if (this.state.sessionsCompleted >= 1) this.state.badges.firstStep = true;
+        if (this.state.activeSession && this.state.activeSession.score === 100) this.state.badges.perfectScore = true;
+        if (this.state.sessionsCompleted >= 4) this.state.badges.persistentLearner = true;
+        if (this.state.usedQuestionIds.length >= 200) this.state.badges.nihongoChampion = true;
+      }
+
+      playSound(type) {
+        if (!this.state.settings.sound) return;
+        try {
+          if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+
+          if (type === 'correct') {
+            osc.frequency.setValueAtTime(523.25, this.audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, this.audioCtx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(this.audioCtx.currentTime + 0.3);
+          } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, this.audioCtx.currentTime); // A3
+            osc.frequency.setValueAtTime(174.61, this.audioCtx.currentTime + 0.15); // F3
+            gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.4);
+            osc.start();
+            osc.stop(this.audioCtx.currentTime + 0.4);
+          }
+        } catch (e) {
+          // Audio fallback silently
+        }
+      }
+
+      speakJapanese(text) {
+        if (!('speechSynthesis' in window)) {
+          alert('Web Speech API tidak didukung oleh browser Anda.');
+          return;
+        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'ja-JP';
+        utter.rate = 0.9;
+        window.speechSynthesis.speak(utter);
+      }
+
+      renderHiraganaGrid() {
+        const container = document.getElementById('hiragana-container');
+        container.innerHTML = '';
+
+        const grid = document.createElement('div');
+        grid.className = 'hiragana-grid';
+
+        HIRAGANA_DATA.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'kana-card';
+          if (!item.char) {
+            card.style.visibility = 'hidden';
+          } else {
+            card.innerHTML = `
+              <div class="kana-char">${item.char}</div>
+              <div class="kana-romaji">${item.romaji}</div>
+            `;
+            card.onclick = () => this.speakJapanese(item.char);
+          }
+          grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
+      }
+
+      renderReview() {
+        const container = document.getElementById('review-list-container');
+        container.innerHTML = '';
+
+        if (this.state.wrongQuestionIds.length === 0) {
+          container.innerHTML = `
+            <div class="card" style="text-align:center; color:var(--text-muted); padding:2rem;">
+              🎉 Selamat! Belum ada daftar soal yang dijawab salah.
+            </div>
+          `;
+          return;
+        }
+
+        this.state.wrongQuestionIds.forEach(id => {
+          const q = questionBank.find(item => item.id === id);
+          if (!q) return;
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.style.marginBottom = '1rem';
+          card.innerHTML = `
+            <div style="font-size:0.8rem; font-weight:700; color:var(--primary-dark); margin-bottom:0.35rem;">
+              SOAL UNIK #${q.id}
+            </div>
+            <div style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">${q.question}</div>
+            <div style="background:var(--correct-bg); padding:0.75rem; border-radius:8px; color:#065f46; font-weight:600; font-size:0.9rem;">
+              Kunci Jawaban: (${q.answer}) ${q.options[q.answer]}
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
+              ${q.explanation || ''}
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:0.75rem;">
+              <button class="btn-action btn-secondary" onclick="app.removeWrongQuestion(${q.id})" style="width:auto; padding:0.4rem 0.85rem; font-size:0.8rem;">
+                ✓ Tandai Sudah Dipahami
+              </button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      removeWrongQuestion(id) {
+        this.state.wrongQuestionIds = this.state.wrongQuestionIds.filter(qId => qId !== id);
+        this.saveState();
+        this.renderReview();
+      }
+
+      renderStats() {
+        document.getElementById('stat-sessions').textContent = this.state.sessionsCompleted;
+        document.getElementById('stat-total-q').textContent = this.state.totalAnswered;
+        
+        const accuracy = this.state.totalAnswered > 0 
+          ? Math.round((this.state.totalCorrect / this.state.totalAnswered) * 100) 
+          : 0;
+        document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+        document.getElementById('stat-high-score').textContent = this.state.highScore;
+
+        const badgesGrid = document.getElementById('badges-grid');
+        badgesGrid.innerHTML = '';
+
+        const badgeList = [
+          { key: 'firstStep', name: 'First Step', icon: '🚀', desc: 'Selesaikan 1 Sesi Kuis' },
+          { key: 'perfectScore', name: 'Perfect Score', icon: '💯', desc: 'Dapatkan Skor 100' },
+          { key: 'persistentLearner', name: 'Persistent', icon: '🔥', desc: 'Selesaikan 4 Sesi' },
+          { key: 'nihongoChampion', name: 'Nihongo Champion', icon: '👑', desc: 'Kuasai 200 Soal N5' }
+        ];
+
+        badgeList.forEach(b => {
+          const unlocked = this.state.badges[b.key];
+          const div = document.createElement('div');
+          div.className = 'summary-box';
+          div.style.opacity = unlocked ? '1' : '0.4';
+          div.style.border = unlocked ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)';
+          div.innerHTML = `
+            <div style="font-size:1.8rem; margin-bottom:0.25rem;">${b.icon}</div>
+            <div style="font-size:0.85rem; font-weight:800;">${b.name}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">${b.desc}</div>
+          `;
+          badgesGrid.appendChild(div);
+        });
+      }
+
+      startQuestionTimer() {
+        this.stopTimer();
+        let timeLeft = this.state.settings.timerSeconds;
+        const container = document.getElementById('quiz-timer-container');
+        const text = document.getElementById('quiz-timer-text');
+        
+        container.style.display = 'flex';
+        text.textContent = `${timeLeft}s`;
+
+        this.timerInterval = setInterval(() => {
+          timeLeft--;
+          text.textContent = `${timeLeft}s`;
+          if (timeLeft <= 0) {
+            this.stopTimer();
+            // Automatically calculate wrong on timeout
+            this.handleAnswerSelect(null, null);
+          }
+        }, 1000);
+      }
+
+      stopTimer() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+      }
+
+      confirmExitQuiz() {
+        document.getElementById('modal-exit-quiz').classList.add('active');
+      }
+
+      confirmExitQuizAction() {
+        this.stopTimer();
+        this.closeModal('modal-exit-quiz');
+        this.navigate('home');
+      }
+
+      closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+      }
+
+      toggleMute() {
+        this.state.settings.sound = !this.state.settings.sound;
+        document.getElementById('btn-quiz-mute').textContent = this.state.settings.sound ? '🔊 Audio' : '🔇 Mute';
+        this.saveState();
+      }
+
+      updateSettings() {
+        this.state.settings.mode = document.getElementById('setting-mode').value;
+        this.state.settings.sound = document.getElementById('setting-sound').checked;
+        this.saveState();
+      }
+
+      resetAllProgress() {
+        if (confirm('Apakah Anda yakin ingin menghapus seluruh progres belajar? Actions ini tidak dapat dibatalkan.')) {
+          localStorage.removeItem('nihongo_quest_data');
+          this.state = { ...DEFAULT_STATE };
+          this.saveState();
+          this.navigate('home');
+          alert('Progres belajar telah berhasil di-reset.');
+        }
+      }
+    }
+
+    let app;
+    window.addEventListener('DOMContentLoaded', () => {
+      app = new NihongoApp();
+    });
+  </script>
+</body>
+</html>
